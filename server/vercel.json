@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "installCommand": "cd .. && npm install",
+  "buildCommand": "cd .. && prisma generate && npm run build -w nextgen-server",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
+  ]
+}

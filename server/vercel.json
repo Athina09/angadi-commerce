@@ -3,14 +3,18 @@
   "installCommand": "cd .. && npm install",
   "buildCommand": "cd .. && prisma generate && npm run build -w nextgen-server",
   "builds": [
+    { "src": "src/index.ts", "use": "@vercel/node" },
     { "src": "api/index.ts", "use": "@vercel/node" }
   ],
   "functions": {
+    "src/**": {
+      "includeFiles": "../node_modules/.prisma/**"
+    },
     "api/**": {
       "includeFiles": "../node_modules/.prisma/**"
     }
   },
   "routes": [
-    { "src": "/(.*)", "dest": "api/index.ts" }
+    { "src": "/(.*)", "dest": "src/index.ts" }
   ]
 }

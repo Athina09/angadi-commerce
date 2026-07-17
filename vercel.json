@@ -2,6 +2,11 @@
   "version": 2,
   "installCommand": "npm install",
   "buildCommand": "prisma generate && npm run build -w nextgen-server",
+  "functions": {
+    "api/**": {
+      "includeFiles": "node_modules/.prisma/**"
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/api" }
   ]

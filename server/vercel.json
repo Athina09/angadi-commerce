@@ -2,12 +2,15 @@
   "version": 2,
   "installCommand": "cd .. && npm install",
   "buildCommand": "cd .. && prisma generate && npm run build -w nextgen-server",
+  "builds": [
+    { "src": "api/index.ts", "use": "@vercel/node" }
+  ],
   "functions": {
     "api/**": {
       "includeFiles": "../node_modules/.prisma/**"
     }
   },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
+  "routes": [
+    { "src": "/(.*)", "dest": "api/index.ts" }
   ]
 }

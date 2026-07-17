@@ -1,4 +1,4 @@
-# NextGen Commerce
+# Angadi
 
 Hyperlocal fruits / vegetables / grocery marketplace — **Catalog + Listing** model so a customer can click one product and see every nearby shop that stocks it.
 

@@ -165,7 +165,7 @@ export async function ensureDemoOrders(vendorId: string) {
     customer = await prisma.user.create({
       data: {
         name: "Demo Buyer",
-        email: `demo-buyer-${vendorId.slice(-6)}@nextgen.local`,
+        email: `demo-buyer-${vendorId.slice(-6)}@angadi.local`,
         passwordHash: "demo",
         role: "customer",
         lat: 13.06,
@@ -646,7 +646,7 @@ async function getDemoCustomerId() {
     customer = await prisma.user.create({
       data: {
         name: "Demo Buyer",
-        email: `pipeline-buyer@nextgen.local`,
+        email: `pipeline-buyer@angadi.local`,
         passwordHash: "demo",
         role: "customer",
         lat: 13.06,

@@ -12,6 +12,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Competitor, HeatWeight } from "@/data/vendorDashboardMock";
 import { Card } from "@/components/ui/Card";
+import { api } from "@/lib/api";
 import { cn, formatINR, formatPct } from "@/lib/utils";
 
 type Props = {
@@ -178,10 +179,33 @@ export function CompetitorHeatmap({
   onWeightChange,
 }: Props) {
   const [ready, setReady] = useState(false);
+  const [ragBrief, setRagBrief] = useState<string | null>(null);
 
   useEffect(() => {
     setReady(true);
   }, []);
+
+  // Dummy RAG heatmap brief — non-blocking, ignore failures
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const { data } = await api.get<{ answer: string }>("/vendor/rag/heatmap", {
+          params: {
+            weight,
+            region: "Chennai",
+            competitorCount: insight.competitorCount,
+          },
+        });
+        if (!cancelled) setRagBrief(data.answer);
+      } catch {
+        if (!cancelled) setRagBrief(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [weight, insight.competitorCount]);
 
   const heatPoints = useMemo((): [number, number, number][] => {
     return competitors.map((c) => [
@@ -334,6 +358,11 @@ export function CompetitorHeatmap({
         </span>{" "}
         local market rate.
       </p>
+      {ragBrief && (
+        <p className="mt-3 text-[12px] leading-relaxed text-muted whitespace-pre-wrap rounded-[12px] border border-dashed border-ink/15 bg-white/60 px-4 py-3">
+          {ragBrief}
+        </p>
+      )}
     </Card>
   );
 }

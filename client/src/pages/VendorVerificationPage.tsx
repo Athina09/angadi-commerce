@@ -221,7 +221,7 @@ export function VendorVerificationPage() {
           </div>
           <div>
             <p className="text-[14px] font-semibold tracking-tight text-[#1A1A1A]">
-              NextGen Commerce
+              Angadi
             </p>
             <p className="text-[10px] uppercase tracking-[0.16em] text-[#6B7280]">
               Seller verification
@@ -638,7 +638,7 @@ function IntroHero() {
         Become a Verified Vendor
       </p>
       <h1 className="mt-2 text-[26px] sm:text-[32px] font-bold tracking-tight text-[#1A1A1A] leading-tight">
-        Join NextGen Commerce by completing our secure vendor verification
+        Join Angadi by completing our secure vendor verification
         process.
       </h1>
       <p className="mt-3 text-[14px] text-[#6B7280] leading-relaxed max-w-2xl">

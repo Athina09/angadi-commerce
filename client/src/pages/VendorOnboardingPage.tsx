@@ -125,7 +125,7 @@ export function VendorOnboardingPage() {
     <div className="min-h-[100svh] bg-bone text-ink font-[family-name:var(--font-inter)]">
       <header className="px-5 sm:px-8 pt-5 flex items-center justify-between">
         <Link to="/" className="font-display font-bold text-terracotta">
-          NextGen
+          Angadi
         </Link>
         <span className="text-[11px] tracking-[0.18em] uppercase text-muted">
           Vendor onboarding

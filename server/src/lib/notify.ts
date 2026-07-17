@@ -123,7 +123,7 @@ async function sendEmail(
   const from =
     process.env.SMTP_FROM ||
     process.env.ALERT_FROM ||
-    "NextGen Alerts <onboarding@resend.dev>";
+    "Angadi Alerts <onboarding@resend.dev>";
 
   if (resendKey) {
     try {
@@ -387,7 +387,7 @@ export async function notifyIfCriticalStock(
   const body = [
     `Hi ${vendor.user.name},`,
     ``,
-    `Critical stock alert from NextGen Vendor Hub.`,
+    `Critical stock alert from Angadi Vendor Hub.`,
     ``,
     `Product: ${payload.catalogName}`,
     `Stock now: ${payload.stock} (alert when < ${CRITICAL_STOCK_LT})`,
@@ -395,10 +395,10 @@ export async function notifyIfCriticalStock(
     `Store: ${vendor.storeName}`,
     ``,
     `Restock soon to avoid lost sales.`,
-    `— NextGen Commerce`,
+    `— Angadi`,
   ].join("\n");
 
-  const smsBody = `NextGen: ${payload.catalogName} stock ${payload.stock} (<${CRITICAL_STOCK_LT}). Restock now. — ${vendor.storeName}`;
+  const smsBody = `Angadi: ${payload.catalogName} stock ${payload.stock} (<${CRITICAL_STOCK_LT}). Restock now. — ${vendor.storeName}`;
 
   const [email, sms] = await Promise.all([
     sendEmail(emailTo, subject, body),

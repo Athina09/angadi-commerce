@@ -6,8 +6,13 @@ import { cn, formatINR } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { useShopLocation } from "@/hooks/useShopLocation";
 import { getSocket, type FreshnessUpdatedEvent, type StockUpdatedEvent } from "@/lib/socket";
-import { freshnessBadgeClass } from "@/lib/freshness";
 import { ShopToastStack, useShopToasts } from "@/components/shop/ShopToast";
+import { ProductCard } from "@/components/shop/ProductCard";
+import { ProductSkeletonGrid } from "@/components/shop/ProductSkeleton";
+import { SortDropdown } from "@/components/shop/SortDropdown";
+import { CartDrawer, MiniCartButton } from "@/components/shop/CartDrawer";
+import { sortCatalog, type SortOption } from "@/hooks/useShopProducts";
+import { useCartStore } from "@/store/cartStore";
 
 export type CatalogCard = {
   id: string;
@@ -44,14 +49,6 @@ export type ShopProduct = CatalogCard & {
   vendor: { id: string; storeName: string; lat?: number; lng?: number } | null;
 };
 
-function stockChip(status: CatalogCard["stockStatus"], label: string) {
-  if (status === "out")
-    return { text: label, className: "text-red-700 bg-red-50" };
-  if (status === "low")
-    return { text: label, className: "text-amber-800 bg-amber-50" };
-  return { text: label, className: "text-emerald-800 bg-emerald-50" };
-}
-
 function useDebounced(value: string, ms = 300) {
   const [v, setV] = useState(value);
   useEffect(() => {
@@ -76,6 +73,9 @@ export function ShopPage() {
   const [error, setError] = useState<string | null>(null);
   const [flashIds, setFlashIds] = useState<Set<string>>(new Set());
   const [nearOpen, setNearOpen] = useState(false);
+  const [sort, setSort] = useState<SortOption>("newest");
+  const [cartOpen, setCartOpen] = useState(false);
+  const patchStock = useCartStore((s) => s.patchStock);
   const debouncedSearch = useDebounced(search, 300);
 
   const load = useCallback(async () => {
@@ -112,11 +112,7 @@ export function ShopPage() {
     const socket = getSocket();
     if (!socket) return;
     const onStock = (ev: StockUpdatedEvent) => {
-      setCatalog((prev) => {
-        const hit = prev.find((c) => c.id === ev.catalogId);
-        if (!hit) return prev;
-        return prev;
-      });
+      patchStock(ev.catalogId, ev.stock);
       setFlashIds((s) => new Set(s).add(ev.catalogId));
       window.setTimeout(() => {
         setFlashIds((s) => {
@@ -160,9 +156,13 @@ export function ShopPage() {
       socket.off("stock-updated", onStock);
       socket.off("freshness-updated", onFresh);
     };
-  }, [load, push]);
+  }, [load, push, patchStock]);
 
   const chips = useMemo(() => ["all", ...categories], [categories]);
+  const sortedCatalog = useMemo(
+    () => sortCatalog(catalog, sort),
+    [catalog, sort]
+  );
 
   return (
     <div className="min-h-screen bg-bone text-charcoal">
@@ -172,7 +172,7 @@ export function ShopPage() {
             to="/"
             className="font-display text-lg sm:text-xl tracking-[0.12em] uppercase text-charcoal"
           >
-            NextGen
+            Angadi
           </Link>
           <nav className="flex items-center gap-3 sm:gap-5 text-[11px] sm:text-xs tracking-[0.18em] uppercase text-charcoal/70">
             <Link to="/shop" className="text-charcoal font-medium">
@@ -207,6 +207,7 @@ export function ShopPage() {
                 Sign in
               </Link>
             )}
+            <MiniCartButton onOpen={() => setCartOpen(true)} />
           </nav>
         </div>
       </header>
@@ -235,7 +236,7 @@ export function ShopPage() {
                 className="w-full rounded-full border border-charcoal/12 bg-white/70 pl-11 pr-4 py-3.5 text-[14px] outline-none focus:border-amber-earth/50"
               />
             </div>
-            <div className="relative">
+            <div className={cn("relative", nearOpen && "z-50")}>
               <button
                 type="button"
                 onClick={() => setNearOpen((o) => !o)}
@@ -257,7 +258,7 @@ export function ShopPage() {
                 </span>
               </button>
               {nearOpen && (
-                <div className="absolute z-20 mt-2 w-full rounded-2xl border border-charcoal/10 bg-white p-3 shadow-lg">
+                <div className="absolute z-50 mt-2 w-full rounded-2xl border border-charcoal/10 bg-white p-3 shadow-lg">
                   <p className="text-[11px] text-charcoal/55 mb-2 leading-relaxed">
                     Location should be your area so we sort shops by distance and
                     show nearby stock.
@@ -318,7 +319,8 @@ export function ShopPage() {
       </section>
 
       <div className="sticky top-[57px] z-30 bg-bone/95 backdrop-blur border-b border-charcoal/8">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-3 flex gap-2 overflow-x-auto">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar flex-1">
           {chips.map((c) => (
             <button
               key={c}
@@ -334,21 +336,13 @@ export function ShopPage() {
               {c === "all" ? "All" : c}
             </button>
           ))}
+          </div>
+          <SortDropdown value={sort} onChange={setSort} />
         </div>
       </div>
 
       <main className="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-12">
-        {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="space-y-3">
-                <div className="aspect-[4/5] animate-pulse bg-charcoal/8 rounded-sm" />
-                <div className="h-4 w-2/3 animate-pulse bg-charcoal/8 rounded" />
-                <div className="h-3 w-1/3 animate-pulse bg-charcoal/8 rounded" />
-              </div>
-            ))}
-          </div>
-        )}
+        {loading && <ProductSkeletonGrid count={8} />}
 
         {!loading && error && (
           <div className="text-center py-20">
@@ -390,94 +384,26 @@ export function ShopPage() {
           </div>
         )}
 
-        {!loading && !error && catalog.length > 0 && (
+        {!loading && !error && sortedCatalog.length > 0 && (
           <>
             <p className="text-[11px] tracking-[0.18em] uppercase text-charcoal/45 mb-8">
-              {catalog.length} product{catalog.length === 1 ? "" : "s"}
+              {sortedCatalog.length} product{sortedCatalog.length === 1 ? "" : "s"}
               {location ? ` · near ${location.label}` : ""}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 sm:gap-x-8 sm:gap-y-14">
-              {catalog.map((p) => {
-                const stock = stockChip(p.stockStatus, p.stockLabel);
-                const flashed = flashIds.has(p.id);
-                return (
-                  <Link
-                    key={p.id}
-                    to={`/shop/product/${p.id}`}
-                    className={cn(
-                      "group block rounded-sm transition ring-offset-2",
-                      flashed && "ring-2 ring-amber-earth/60 animate-pulse"
-                    )}
-                  >
-                    <div className="relative aspect-[4/5] overflow-hidden bg-charcoal/5">
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name}
-                        className="h-full w-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.04]"
-                        loading="lazy"
-                      />
-                      <span
-                        className={cn(
-                          "absolute top-3 left-3 rounded-full px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase font-medium",
-                          stock.className
-                        )}
-                      >
-                        {stock.text}
-                      </span>
-                      {p.freshness && (
-                        <span
-                          className={cn(
-                            "absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10px] font-semibold max-w-[48%] text-right leading-tight",
-                            freshnessBadgeClass(
-                              p.freshness.band as
-                                | "fresh"
-                                | "fading"
-                                | "discard_soon"
-                                | "expired"
-                            )
-                          )}
-                        >
-                          {p.freshness.daysSurviveText
-                            ? `${p.freshness.percent}% · ${p.freshness.daysLeft ?? "?"}d`
-                            : p.freshness.text}
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-4 flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[10px] tracking-[0.2em] uppercase text-charcoal/45">
-                          {p.category}
-                        </p>
-                        <h2 className="mt-1 font-display text-xl leading-snug text-charcoal group-hover:text-amber-earth transition-colors">
-                          {p.name}
-                        </h2>
-                        <p className="mt-1 text-[13px] text-charcoal/50 truncate">
-                          {p.shopCount > 0
-                            ? `${p.shopCount} shop${p.shopCount === 1 ? "" : "s"}`
-                            : "No shops yet"}
-                          {p.bestVendor
-                            ? ` · from ${p.bestVendor.storeName}`
-                            : ""}
-                        </p>
-                      </div>
-                      <p className="shrink-0 font-display text-lg text-charcoal">
-                        {p.lowestPrice != null
-                          ? formatINR(p.lowestPrice)
-                          : "—"}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:gap-6">
+              {sortedCatalog.map((p) => (
+                <ProductCard key={p.id} product={p} pulsing={flashIds.has(p.id)} />
+              ))}
             </div>
           </>
         )}
       </main>
 
       <footer className="border-t border-charcoal/8 px-6 py-8 text-center text-[11px] tracking-[0.15em] uppercase text-charcoal/40">
-        NextGen Commerce · Live vendor catalog
+        Angadi · Live vendor catalog
       </footer>
       <ShopToastStack toasts={toasts} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }

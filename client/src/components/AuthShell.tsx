@@ -35,7 +35,7 @@ export function AuthShell({ eyebrow, title, children }: AuthShellProps) {
           to="/"
           className="font-display text-sm tracking-[0.18em] uppercase text-white/90"
         >
-          NextGen
+          Angadi
         </Link>
         <nav className="flex items-center gap-6 text-[11px] tracking-[0.2em] uppercase text-white/85">
           <Link to="/shop" className="hover:text-white transition-colors duration-500">
@@ -55,7 +55,7 @@ export function AuthShell({ eyebrow, title, children }: AuthShellProps) {
             </p>
             <Link to="/" className="block text-center">
               <span className="font-display text-[1.65rem] sm:text-3xl font-medium text-amber-earth leading-none">
-                NextGen{" "}
+                Angadi{" "}
                 <em className="italic font-light text-charcoal">Commerce</em>
               </span>
             </Link>

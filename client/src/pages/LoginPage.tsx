@@ -108,7 +108,7 @@ export function LoginPage() {
           to="/"
           className="font-[family-name:var(--font-playfair)] text-lg sm:text-xl tracking-[0.14em] uppercase text-white"
         >
-          NextGen
+          Angadi
         </Link>
         <Link
           to="/register"
@@ -134,7 +134,7 @@ export function LoginPage() {
                 className="inline-flex items-center gap-2 font-[family-name:var(--font-playfair)] text-xl tracking-[0.08em]"
               >
                 <Sparkles className="h-4 w-4 text-[#B97743]" strokeWidth={1.5} />
-                NEXTGEN
+                ANGADI
               </Link>
               <p className="mt-3 text-[10px] tracking-[0.28em] uppercase text-[#B97743] font-medium">
                 Welcome back

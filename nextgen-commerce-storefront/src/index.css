@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terracotta-50: #fbf0eb;
+  --color-terracotta-100: #f6ded3;
+  --color-terracotta-200: #edbca6;
+  --color-terracotta-300: #e29a7b;
+  --color-terracotta-400: #d67a56;
+  --color-terracotta-500: #c65d3b;
+  --color-terracotta-600: #a84a2d;
+  --color-cream: #fff8f2;
+  --color-ink: #2b1d16;
+  --color-mustard-400: #e8a317;
+  --color-mustard-500: #c88c10;
+  --color-sage: #7a8b6f;
+  --color-amber-stock: #e8a33d;
+  --color-crit: #e85d5d;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Outfit", system-ui, sans-serif;
+  --shadow-soft: 0 2px 12px rgba(66, 29, 19, 0.06);
+  --shadow-lift: 0 12px 32px rgba(66, 29, 19, 0.12);
+  --animate-stock-pulse: stock-pulse 0.9s ease-out;
+}
+
+@keyframes stock-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(198, 93, 59, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(198, 93, 59, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(198, 93, 59, 0);
+  }
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-cream font-body text-ink antialiased;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-terracotta-500 ring-offset-2 ring-offset-cream rounded-md;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

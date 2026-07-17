@@ -20,6 +20,14 @@ export function joinVendorRoom(vendorId: string) {
   s?.emit("join-vendor", vendorId);
 }
 
+export function joinProductRoom(catalogId: string) {
+  getSocket()?.emit("join-product", catalogId);
+}
+
+export function leaveProductRoom(catalogId: string) {
+  getSocket()?.emit("leave-product", catalogId);
+}
+
 export type StockUpdatedEvent = {
   listingId: string;
   catalogId: string;

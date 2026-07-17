@@ -8,6 +8,8 @@ import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { ShopPage } from "./pages/ShopPage";
 import { ProductDetailPage } from "./pages/ProductDetailPage";
 import { ShopRequestPlaceholderPage } from "./pages/ShopRequestPlaceholderPage";
+import { PartnerStorePage } from "./pages/PartnerStorePage";
+import { ShopCheckoutPage, ShopCheckoutSuccessPage } from "./pages/ShopCheckoutPage";
 import { VendorDashboardPage } from "./pages/VendorDashboardPage";
 import { VendorOnboardingPage } from "./pages/VendorOnboardingPage";
 import { VendorPendingVerificationPage } from "./pages/VendorPendingVerificationPage";
@@ -37,6 +39,9 @@ function App() {
 
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+        <Route path="/shop/partner/:storeId/product/:productId" element={<PartnerStorePage />} />
+        <Route path="/shop/checkout" element={<ShopCheckoutPage />} />
+        <Route path="/shop/checkout/success" element={<ShopCheckoutSuccessPage />} />
         <Route path="/shop/request" element={<ShopRequestPlaceholderPage />} />
         <Route
           path="/shop/*"

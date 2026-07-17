@@ -21,6 +21,7 @@ import {
 import { computeFreshness, suggestDecayCurve, type DecayCurveType } from "../lib/freshness.js";
 import { answerVendorChat } from "../lib/vendorChat.js";
 import { runQualityCheck } from "../lib/qualityCheck.js";
+import { ragHeatmapBrief, ragQuery } from "../lib/rag.js";
 import multer from "multer";
 
 const router = Router();
@@ -365,6 +366,56 @@ router.post(
     } catch (err) {
       console.error("POST /vendor/chat", err);
       res.status(500).json({ error: "Assistant unavailable" });
+    }
+  }
+);
+
+/** Dummy RAG query — proxy to ml-service keyword pipeline */
+router.post(
+  "/rag/query",
+  requireAuth,
+  requireRole("vendor"),
+  async (req: AuthedRequest, res) => {
+    const schema = z.object({
+      query: z.string().min(1).max(500),
+      source: z
+        .enum(["heatmap", "freshness", "inventory", "market", "admin"])
+        .optional(),
+      topK: z.number().int().min(1).max(8).optional(),
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "Invalid RAG query" });
+      return;
+    }
+    try {
+      const result = await ragQuery(parsed.data.query, {
+        source: parsed.data.source,
+        topK: parsed.data.topK,
+      });
+      res.json(result);
+    } catch (err) {
+      console.error("POST /vendor/rag/query", err);
+      res.status(500).json({ error: "RAG unavailable" });
+    }
+  }
+);
+
+/** Dummy RAG brief for competitor heatmap widget */
+router.get(
+  "/rag/heatmap",
+  requireAuth,
+  requireRole("vendor"),
+  async (req: AuthedRequest, res) => {
+    try {
+      const weight = String(req.query.weight ?? "density");
+      const region = String(req.query.region ?? "Chennai");
+      const competitorCount = Number(req.query.competitorCount ?? 0) || 0;
+      const result = await ragHeatmapBrief({ weight, region, competitorCount });
+      res.json(result);
+    } catch (err) {
+      console.error("GET /vendor/rag/heatmap", err);
+      res.status(500).json({ error: "RAG heatmap unavailable" });
     }
   }
 );

@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { api } from "@/lib/api";
 import { VendorAiAssistant } from "@/components/vendor/VendorAiAssistant";
+import { VendorVoiceTamil } from "@/components/vendor/VendorVoiceTamil";
 
 type Props = {
   title?: string;
@@ -95,7 +96,7 @@ export function VendorHubShell({ title, children, verified: verifiedProp }: Prop
     <div className="flex h-full flex-col">
       <div className="px-5 pt-5 pb-4">
         <Link to="/" className="font-display text-lg font-bold text-vh-blue tracking-tight">
-          NextGen
+          Angadi
         </Link>
         <p className="mt-0.5 text-[11px] uppercase tracking-[0.16em] text-vh-muted font-semibold">
           Vendor Hub
@@ -244,7 +245,7 @@ export function VendorHubShell({ title, children, verified: verifiedProp }: Prop
               to="/"
               className="hidden sm:inline font-display text-sm font-bold text-vh-blue"
             >
-              NextGen Commerce
+              Angadi
             </Link>
           </div>
         </header>

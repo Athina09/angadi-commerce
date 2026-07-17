@@ -19,7 +19,7 @@ export function VendorAiPage() {
             </span>
             <div>
               <h2 className="font-display text-2xl font-bold text-vh-text tracking-tight">
-                NextGen Advisor
+                Angadi Advisor
               </h2>
               <p className="mt-1.5 text-[14px] text-vh-muted leading-relaxed">
                 Inventory-aware guidance for restock, freshness, pricing, and

@@ -4,11 +4,12 @@ from typing import Optional
 import httpx
 
 from insights.quality_check import score_quality_from_bytes
+from rag import get_rag
 
 app = FastAPI(
-    title="NextGen Commerce ML Service",
-    version="0.2.0",
-    description="Heuristics + stubs. Quality check uses OpenCV — not a trained spoilage model.",
+    title="Angadi ML Service",
+    version="0.3.0",
+    description="Heuristics + stubs. Quality check uses OpenCV. RAG is a dummy keyword pipeline.",
 )
 
 
@@ -29,13 +30,75 @@ class QualityUrlRequest(BaseModel):
     category: str = "Vegetables"
 
 
+class RagQueryRequest(BaseModel):
+    query: str
+    source: Optional[str] = None  # heatmap | freshness | inventory | market | admin
+    topK: int = 3
+
+
+class RagIngestDoc(BaseModel):
+    id: str
+    source: str
+    topic: str
+    text: str
+
+
+class RagIngestRequest(BaseModel):
+    docs: list[RagIngestDoc]
+
+
+class RagHeatmapRequest(BaseModel):
+    weight: str = "density"  # density | orders | price
+    region: str = "Chennai"
+    competitorCount: int = 0
+
+
 @app.get("/health")
 def health():
+    rag = get_rag()
     return {
         "status": "ok",
-        "service": "nextgen-ml",
+        "service": "angadi-ml",
         "qualityCheck": "opencv-heuristic",
+        "rag": {"mode": "dummy", "docs": len(rag.docs)},
     }
+
+
+@app.post("/rag/query")
+def rag_query(body: RagQueryRequest):
+    """Dummy RAG retrieve + template answer (heatmap / insights / chat later)."""
+    result = get_rag().query(body.query, source=body.source, top_k=body.topK)
+    return {
+        "answer": result.answer,
+        "citations": result.citations,
+        "mode": result.mode,
+        "retrieved": result.retrieved,
+    }
+
+
+@app.post("/rag/heatmap")
+def rag_heatmap(body: RagHeatmapRequest):
+    """Dummy brief for competitor / admin heatmap widgets."""
+    result = get_rag().heatmap_brief(
+        weight=body.weight,
+        region=body.region,
+        competitor_count=body.competitorCount,
+    )
+    return {
+        "answer": result.answer,
+        "citations": result.citations,
+        "mode": result.mode,
+        "retrieved": result.retrieved,
+        "weight": body.weight,
+        "region": body.region,
+    }
+
+
+@app.post("/rag/ingest")
+def rag_ingest(body: RagIngestRequest):
+    """Append docs into the in-memory dummy corpus (lost on restart)."""
+    n = get_rag().ingest([d.model_dump() for d in body.docs])
+    return {"ingested": n, "total": len(get_rag().docs), "mode": "dummy"}
 
 
 @app.post("/recommend")

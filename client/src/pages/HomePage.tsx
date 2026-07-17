@@ -100,7 +100,7 @@ export function HomePage() {
               to="/"
               className="font-display text-base sm:text-lg tracking-[0.16em] uppercase text-white"
             >
-              NextGen
+              Angadi
             </Link>
             <nav className="flex items-center gap-4 sm:gap-7 text-[12px] sm:text-[13px] tracking-[0.18em] uppercase text-white/95">
               <Link to="/shop" className="hover:text-white transition-colors">
@@ -151,7 +151,7 @@ export function HomePage() {
         <div className="absolute bottom-8 sm:bottom-10 left-6 sm:left-10 lg:left-14 right-28 sm:right-44 z-10">
           <h1 className="font-display text-white leading-[0.9] tracking-tight drop-shadow-[0_2px_20px_rgba(0,0,0,0.45)]">
             <span className="block text-[clamp(2.75rem,8vw,5.5rem)] font-medium">
-              NextGen
+              Angadi
             </span>
             <span className="block text-[clamp(2.1rem,6.5vw,4rem)] font-light italic opacity-95 -mt-0.5">
               Commerce
@@ -199,7 +199,7 @@ export function HomePage() {
             you’d buy from a neighbor, not a warehouse.
           </h2>
           <p className="mt-5 text-sm leading-relaxed text-charcoal/65 max-w-md mx-auto font-sans">
-            NextGen Commerce connects you with local vendors for produce,
+            Angadi connects you with local vendors for produce,
             pantry, bakery, and everyday essentials — picked that morning, sold
             by people with a name and a stall.
           </p>
@@ -280,7 +280,7 @@ export function HomePage() {
 
       <footer className="bg-bone border-t border-charcoal/8 px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] tracking-[0.15em] uppercase text-charcoal/45">
         <span className="font-display tracking-normal normal-case text-sm text-charcoal/70">
-          NextGen Commerce
+          Angadi
         </span>
         <span>Hyperlocal market · Est. for the neighborhood</span>
       </footer>

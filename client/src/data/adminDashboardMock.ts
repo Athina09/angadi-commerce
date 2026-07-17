@@ -75,7 +75,7 @@ export const ADMIN_REGIONS: AdminRegion[] = [
 export const ADMIN_RISKS = ["All risk levels", "LOW", "MEDIUM", "HIGH"] as const;
 
 export const MOCK_ADMIN_DASHBOARD: AdminDashboardMock = {
-  productName: "NextGen",
+  productName: "Angadi",
   adminName: "Priya Sharma",
   kpis: [
     {

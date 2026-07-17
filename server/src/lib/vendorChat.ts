@@ -107,7 +107,7 @@ function ruleBasedReply(
   const q = question.toLowerCase();
 
   if (/hello|hi\b|hey|vanakkam|namaste/.test(q)) {
-    return `Hello — I'm your NextGen vendor advisor for **${ctx.storeName}**. Ask about stock, freshness, pricing, or what to push this evening.`;
+    return `Hello — I'm your Angadi vendor advisor for **${ctx.storeName}**. Ask about stock, freshness, pricing, or what to push this evening.`;
   }
 
   if (/critical|stock\s*<\s*4|out of stock|run.?out|alert|sms|email/.test(q)) {
@@ -219,7 +219,7 @@ async function openAiReply(
   const key = process.env.OPENAI_API_KEY;
   if (!key) return null;
 
-  const system = `You are NextGen Commerce Vendor Advisor — concise, professional, actionable.
+  const system = `You are Angadi Vendor Advisor — concise, professional, actionable.
 You help Indian hyperlocal produce vendors. Use ₹. Keep answers under 120 words.
 Cite store facts from context. Freshness scores are hybrid decay curves × quality heuristics — NOT a trained deep-learning spoilage classifier. Be honest about that if asked.
 Context:\n${contextSummary(ctx)}`;

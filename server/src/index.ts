@@ -71,7 +71,7 @@ app.use(
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "nextgen-server" });
+  res.json({ status: "ok", service: "angadi-server" });
 });
 
 app.use("/auth", authRoutes);
@@ -97,13 +97,25 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("join-product", (productId: string) => {
+    if (typeof productId === "string" && productId.length > 0) {
+      socket.join(`product:${productId}`);
+    }
+  });
+
+  socket.on("leave-product", (productId: string) => {
+    if (typeof productId === "string" && productId.length > 0) {
+      socket.leave(`product:${productId}`);
+    }
+  });
+
   socket.on("disconnect", () => {
     /* no-op */
   });
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`NextGen Commerce API listening on :${PORT}`);
+  console.log(`Angadi API listening on :${PORT}`);
   console.log(`CORS origin: ${CLIENT_ORIGIN ?? "(none)"}`);
   startDemoSimulation();
 });

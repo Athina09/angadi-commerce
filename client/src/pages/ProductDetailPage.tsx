@@ -8,8 +8,9 @@ import {
   freshnessConfidenceClass,
 } from "@/lib/freshness";
 import { useShopLocation } from "@/hooks/useShopLocation";
-import { getSocket, type FreshnessUpdatedEvent, type StockUpdatedEvent } from "@/lib/socket";
+import { getSocket, joinProductRoom, leaveProductRoom, type FreshnessUpdatedEvent, type StockUpdatedEvent } from "@/lib/socket";
 import { ShopToastStack, useShopToasts } from "@/components/shop/ShopToast";
+import { PartnerPriceRows } from "@/pages/PartnerStorePage";
 
 type Freshness = {
   percent: number;
@@ -95,6 +96,12 @@ export function ProductDetailPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (!id) return;
+    joinProductRoom(id);
+    return () => leaveProductRoom(id);
+  }, [id]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -195,7 +202,7 @@ export function ProductDetailPage() {
           ← Back to shop
         </Link>
         <Link to="/" className="font-display tracking-[0.14em] uppercase text-sm">
-          NextGen
+          Angadi
         </Link>
       </header>
 
@@ -222,6 +229,14 @@ export function ProductDetailPage() {
               {inStockCount} shop{inStockCount === 1 ? "" : "s"} with stock
               {marketAvg > 0 ? ` · market ~${formatINR(marketAvg)}` : ""}
             </p>
+
+            {listings.length > 0 && (
+              <PartnerPriceRows
+                catalogId={catalog.id}
+                basePrice={listings[0]?.price ?? marketAvg}
+                stock={listings.reduce((s, l) => s + l.stock, 0)}
+              />
+            )}
 
             <div className="mt-6 flex flex-wrap items-center gap-2">
               <button

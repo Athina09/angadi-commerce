@@ -48,7 +48,7 @@ export function VendorAiAssistant() {
       id: "welcome",
       role: "assistant",
       content:
-        "I'm your **NextGen advisor** — ask about stock, freshness, pricing, or evening demand. Answers use your live inventory.",
+        "I'm your **Angadi advisor** — ask about stock, freshness, pricing, or evening demand. Answers use your live inventory.",
     },
   ]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -136,7 +136,7 @@ export function VendorAiAssistant() {
                     </span>
                     <div>
                       <p className="text-[14px] font-semibold leading-tight">
-                        NextGen Advisor
+                        Angadi Advisor
                       </p>
                       <p className="text-[11px] text-white/75 mt-0.5">
                         {mode === "live"
@@ -244,7 +244,7 @@ export function VendorAiAssistant() {
         )}
         whileTap={{ scale: 0.97 }}
         aria-expanded={open}
-        aria-label="Open NextGen Advisor"
+        aria-label="Open Angadi Advisor"
       >
         {open ? (
           <X className="h-4 w-4" />

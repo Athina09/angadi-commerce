@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.env.local
+*.log
+.DS_Store
+uploads
+client/dist
+server/dist
+ml-service/__pycache__
+ml-service/.venv
+.venv

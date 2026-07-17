@@ -1,0 +1,11 @@
+fastapi==0.115.11
+uvicorn[standard]==0.34.0
+numpy==2.2.3
+opencv-python-headless==4.11.0.86
+Pillow==11.1.0
+httpx==0.28.1
+python-multipart==0.0.20
+pydantic==2.10.6
+python-dotenv==1.0.1
+# Optional extras (not required for quality-check):
+# pandas scikit-learn psycopg2-binary kagglehub

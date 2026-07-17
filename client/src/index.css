@@ -1,0 +1,252 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terracotta: #c45c26;
+  --color-terracotta-dark: #9a4519;
+  --color-mustard: #d4a017;
+  --color-cream: #f4f1ea;
+  --color-bone: #f4f1ea;
+  --color-charcoal: #1c1b19;
+  --color-amber-earth: #b57843;
+  --color-sage: #7a8b6f;
+  --color-ink: #1c1b19;
+  --color-muted: #6b5a4a;
+
+  /* Vendor hub (EcoSphere) — also available as utility classes */
+  --color-vh-page: #f7f9fc;
+  --color-vh-card: #ffffff;
+  --color-vh-border: #e7ebf0;
+  --color-vh-text: #1a2233;
+  --color-vh-muted: #6b7787;
+  --color-vh-blue: #2f6fed;
+  --color-vh-blue-soft: #eaf1ff;
+  --color-vh-teal: #17a2a0;
+  --color-vh-good: #1fa97a;
+  --color-vh-warn: #d98c1f;
+  --color-vh-crit: #e0483e;
+  --color-vh-map: #12293a;
+  --color-vh-map-text: #e6f1f3;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, ui-sans-serif, sans-serif;
+  --font-inter: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-bone text-charcoal font-sans min-h-screen;
+  }
+}
+
+/**
+ * Vendor Hub theme scope — remaps warm storefront tokens to EcoSphere blues.
+ * Storefront (/shop, home) stays terracotta; only nodes under .vendor-hub change.
+ */
+.vendor-hub {
+  --color-terracotta: #2f6fed;
+  --color-terracotta-dark: #2458c7;
+  --color-cream: #eaf1ff;
+  --color-bone: #f7f9fc;
+  --color-ink: #1a2233;
+  --color-muted: #6b7787;
+  --color-mustard: #17a2a0;
+  --color-amber-earth: #2f6fed;
+  --color-sage: #1fa97a;
+  --color-charcoal: #1a2233;
+  color: #1a2233;
+  background-color: #f7f9fc;
+}
+
+.vendor-hub .vh-card-shadow {
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+/* Leaflet must sit below sticky chrome / modals */
+.leaflet-container {
+  font-family: var(--font-sans);
+  z-index: 0;
+}
+
+/* Dark competitor heatmap stage (map only — page theme unchanged) */
+.competitor-heatmap-map .heatmap-dark-map {
+  background: #12293a;
+}
+
+.competitor-heatmap-map .leaflet-control-zoom {
+  border: none !important;
+  box-shadow: none !important;
+  margin-right: 12px !important;
+  margin-top: 12px !important;
+}
+
+.competitor-heatmap-map .leaflet-control-zoom a {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  background: rgba(18, 41, 58, 0.9) !important;
+  color: #e6f1f3 !important;
+  border: 1px solid rgba(230, 241, 243, 0.18) !important;
+  border-radius: 8px !important;
+  margin-bottom: 6px !important;
+  font-size: 16px !important;
+}
+
+.competitor-heatmap-map .leaflet-control-zoom a:hover {
+  background: rgba(47, 111, 237, 0.85) !important;
+  color: #fff !important;
+}
+
+.competitor-heatmap-map .leaflet-control-attribution {
+  background: rgba(0, 0, 0, 0.45) !important;
+  color: rgba(230, 241, 243, 0.55) !important;
+  font-size: 10px !important;
+}
+
+.competitor-heatmap-map .leaflet-control-attribution a {
+  color: rgba(230, 241, 243, 0.7) !important;
+}
+
+.heatmap-label {
+  background: transparent !important;
+  border: none !important;
+}
+
+.heatmap-label-text {
+  display: inline-block;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  color: #e6f1f3;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.01em;
+}
+
+.heatmap-label-you {
+  color: #93c5fd;
+}
+
+.heatmap-you-marker span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2f6fed;
+  border: 2px solid #eaf1ff;
+  box-shadow:
+    0 0 0 4px rgba(47, 111, 237, 0.35),
+    0 0 16px rgba(23, 162, 160, 0.55);
+}
+
+.heatmap-glow-circle {
+  filter: blur(0.2px);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes signupBgZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes signupCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.signup-bg-zoom {
+  animation: signupBgZoom 28s ease-in-out infinite alternate;
+}
+
+.signup-card-in {
+  animation: signupCardIn 0.7s ease-out both;
+}
+
+/* —— Admin command center —— */
+.admin-shell {
+  font-family: var(--font-inter);
+}
+
+.admin-heatmap-map {
+  background: #1a2b32;
+}
+
+.admin-heatmap .leaflet-container {
+  background: #1a2b32;
+}
+
+.admin-map-label {
+  background: transparent !important;
+  border: none !important;
+}
+
+.admin-map-label span {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(226, 232, 240, 0.72);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+@keyframes adminFeedFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-feed-fade {
+  animation: adminFeedFade 0.45s ease-out both;
+}
+
+@keyframes adminMarkerPulse {
+  0%,
+  100% {
+    stroke-opacity: 0.95;
+    fill-opacity: 0.4;
+  }
+  50% {
+    stroke-opacity: 1;
+    fill-opacity: 0.7;
+  }
+}
+
+.admin-marker-pulse {
+  animation: adminMarkerPulse 0.9s ease-in-out 2;
+}

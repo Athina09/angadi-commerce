@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  customer
+  vendor
+}
+
+enum Unit {
+  kg
+  dozen
+  piece
+  litre
+}
+
+enum PreferredLang {
+  en
+  ta
+}
+
+enum PaymentMethod {
+  COD
+  DEMO_PAY
+}
+
+enum PaymentStatus {
+  UNPAID
+  HELD
+  RELEASED
+  COD_PENDING
+  COD_COLLECTED
+  REFUNDED
+}
+
+enum VendorOrderStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+/// Category-level spoilage curve (not a trained ML model)
+enum DecayCurve {
+  FAST_EARLY // leafy greens — steep drop first 1–2 days, then flattens
+  LINEAR     // apples, carrots — steady decline
+  SLOW       // coconut, dry grocery — barely decays over weeks
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  passwordHash  String
+  role          Role
+  lat           Float?
+  lng           Float?
+  preferredLang PreferredLang @default(en)
+  createdAt     DateTime      @default(now())
+  vendor        Vendor?
+  cartItems     CartItem[]
+  orders        Order[]       @relation("CustomerOrders")
+}
+
+model Vendor {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  storeName    String
+  lat          Float
+  lng          Float
+  verified     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listings     Listing[]
+  vendorOrders VendorOrder[]
+}
+
+/// Canonical marketplace item (what the customer browses)
+model Catalog {
+  id             String     @id @default(cuid())
+  name           String
+  category       String
+  unit           Unit
+  imageUrl       String
+  shelfLifeDays  Int
+  decayCurveType DecayCurve @default(LINEAR)
+  createdAt      DateTime   @default(now())
+  listings       Listing[]
+
+  @@index([category])
+  @@index([name])
+}
+
+/// One vendor's stock/price for a catalog item
+model Listing {
+  id                    String   @id @default(cuid())
+  vendorId              String
+  catalogId             String
+  price                 Float
+  competitorRefPrice    Float
+  stock                 Int
+  lowStockThreshold     Int      @default(5)
+  listedAt              DateTime @default(now())
+  /// 0.0–1.0 from photo heuristic at listing creation (defaults 1.0 until CV wired)
+  intakeQualityScore    Float    @default(1.0)
+  lastCheckedAt         DateTime @default(now())
+  /// Updated on manual recheck or photo re-score
+  lastCheckQualityScore Float    @default(1.0)
+  updatedAt             DateTime @updatedAt
+  vendor                Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  catalog               Catalog  @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+  orderItems            OrderItem[]
+  cartItems             CartItem[]
+
+  @@unique([vendorId, catalogId])
+  @@index([catalogId])
+  @@index([vendorId])
+  @@index([stock])
+}
+
+/// Parent checkout — one customer payment intent, may span multiple shops
+model Order {
+  id            String        @id @default(cuid())
+  customerId    String
+  totalAmount   Float
+  paymentMethod PaymentMethod
+  createdAt     DateTime      @default(now())
+  customer      User          @relation("CustomerOrders", fields: [customerId], references: [id], onDelete: Cascade)
+  vendorOrders  VendorOrder[]
+
+  @@index([customerId])
+  @@index([createdAt])
+}
+
+/// Per-vendor sub-order — own approval + payment state
+model VendorOrder {
+  id            String            @id @default(cuid())
+  orderId       String
+  vendorId      String
+  subtotal      Float
+  status        VendorOrderStatus @default(PENDING_APPROVAL)
+  paymentStatus PaymentStatus     @default(UNPAID)
+  approvedAt    DateTime?
+  rejectedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  order         Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  vendor        Vendor            @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+
+  @@index([orderId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
+model OrderItem {
+  id              String      @id @default(cuid())
+  vendorOrderId   String
+  listingId       String
+  qty             Int
+  priceAtPurchase Float
+  vendorOrder     VendorOrder @relation(fields: [vendorOrderId], references: [id], onDelete: Cascade)
+  listing         Listing     @relation(fields: [listingId], references: [id])
+
+  @@index([vendorOrderId])
+  @@index([listingId])
+}
+
+model CartItem {
+  id         String  @id @default(cuid())
+  customerId String
+  listingId  String
+  qty        Int
+  customer   User    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  listing    Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, listingId])
+  @@index([customerId])
+}

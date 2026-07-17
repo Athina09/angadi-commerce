@@ -1,0 +1,10 @@
+-- CreateEnum
+CREATE TYPE "DecayCurve" AS ENUM ('FAST_EARLY', 'LINEAR', 'SLOW');
+
+-- AlterTable Catalog
+ALTER TABLE "Catalog" ADD COLUMN "decayCurveType" "DecayCurve" NOT NULL DEFAULT 'LINEAR';
+
+-- AlterTable Listing
+ALTER TABLE "Listing" ADD COLUMN "intakeQualityScore" DOUBLE PRECISION NOT NULL DEFAULT 1.0;
+ALTER TABLE "Listing" ADD COLUMN "lastCheckedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE "Listing" ADD COLUMN "lastCheckQualityScore" DOUBLE PRECISION NOT NULL DEFAULT 1.0;
